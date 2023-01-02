@@ -17,7 +17,6 @@ jobs:
     executor: terraform/default
     steps:
       - checkout
-      - run: export STATE_BUCKET=${STATE_BUCKET}
       - terraform/init:
           path: infrastructure/
 
@@ -32,7 +31,6 @@ jobs:
     executor: terraform/default
     steps:
       - checkout
-      - run: export STATE_BUCKET=${STATE_BUCKET}
       - terraform/plan:
           path: infrastructure/
           out: tfplan
@@ -48,7 +46,6 @@ jobs:
     executor: terraform/default
     steps:
       - checkout
-      - run: export STATE_BUCKET=${STATE_BUCKET}
       - attach_workspace:
           at: .
       - run: ls -lia 
@@ -62,7 +59,6 @@ jobs:
       - image: cimg/go:1.19.4
     steps:
       - checkout
-      - run: export STATE_BUCKET=${STATE_BUCKET}
       - run: |
           go mod init test
           go mod tidy
@@ -78,7 +74,6 @@ jobs:
     executor: terraform/default
     steps:
       - checkout
-      - run: export STATE_BUCKET=${STATE_BUCKET}
       - terraform/destroy:
           path: infrastructure/
 
