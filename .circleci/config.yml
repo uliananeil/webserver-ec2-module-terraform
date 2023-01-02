@@ -26,6 +26,7 @@ jobs:
     steps:
       - checkout
       - run: export STATE_BUCKET=${STATE_BUCKET}
+      - run: echo $STATE_BUCKET
       - terraform/validate:
           path: infrastructure/
 
