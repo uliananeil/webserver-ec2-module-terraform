@@ -59,12 +59,18 @@ jobs:
       - terraform/apply:
           path: infrastructure/
           plan: tfplan
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
   
   terratest:
     docker:
       - image: cimg/go:1.19.4
     steps:
       - checkout
+      - attach_workspace:
+          at: .
       - run: |
           go mod init test
           go mod tidy
@@ -80,8 +86,14 @@ jobs:
     executor: terraform/default
     steps:
       - checkout
+      - attach_workspace:
+          at: .
       - terraform/destroy:
           path: infrastructure/
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
 
 workflows:
   version: 2
