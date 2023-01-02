@@ -13,3 +13,15 @@ output "db_ip" {
     instance.id => instance.private_ip
   }
 }
+
+output "vpc_cidr_block" {
+  value = aws_vpc.terraform.cidr_block
+}
+
+output "http_subnet_cidr_block" {
+  value = aws_subnet.http.cidr_block
+}
+
+output "db_subnet_cidr_block" {
+  value = aws_subnet.db.cidr_block
+}
