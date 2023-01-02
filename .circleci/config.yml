@@ -82,12 +82,10 @@ workflows:
   test-deployment:
     jobs:
       - tfsec-job:
-          context: terraform
           filters:
             branches:
               only: circleci
       - init-job:
-          context: terraform
           filters:
             branches:
               only: circleci
@@ -105,6 +103,9 @@ workflows:
           filters:
             branches:
               only: circleci
+          environment:
+            - AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+            - AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
           requires:
             - validate-job
       - apply-hold:
