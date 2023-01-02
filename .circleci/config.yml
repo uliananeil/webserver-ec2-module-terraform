@@ -88,14 +88,23 @@ workflows:
               only: circleci
       - init-job:
           context: terraform
+          filters:
+            branches:
+              only: circleci
           requires:
             - tfsec-job
       - validate-job:
           context: terraform
+          filters:
+            branches:
+              only: circleci
           requires:
             - init-job
       - plan-job:
           context: terraform
+          filters:
+            branches:
+              only: circleci
           requires:
             - validate-job
       - apply-hold:
@@ -104,10 +113,16 @@ workflows:
             - plan-job
       - apply-job:
           context: terraform
+          filters:
+            branches:
+              only: circleci
           requires:
             - apply-hold
       - terratest:
           context: terraform
+          filters:
+            branches:
+              only: circleci
           requires: 
             - apply-job
       - destroy-hold:
@@ -116,6 +131,9 @@ workflows:
             - terratest
       - destroy-job:
           context: terraform
+          filters:
+            branches:
+              only: circleci
           requires:
             - destroy-hold
  
