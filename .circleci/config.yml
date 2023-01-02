@@ -17,6 +17,7 @@ jobs:
     executor: terraform/default
     steps:
       - checkout
+      - run: export STATE_BUCKET=$STATE_BUCKET
       - terraform/init:
           path: infrastructure/
       - persist_to_workspace:
