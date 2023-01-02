@@ -17,9 +17,8 @@ jobs:
     executor: terraform/default
     steps:
       - checkout
-      - command: export STATE_BUCKET=$STATE_BUCKET
-      - terraform/init:
-          path: infrastructure/
+      - run:
+          command: terraform init -backend=true -backend-config="bucket=terraform-state-bucket-12645" -backend-config="key=$TEST_ENV/terraform.tfstate"
       - persist_to_workspace:
           root: .
           paths:
