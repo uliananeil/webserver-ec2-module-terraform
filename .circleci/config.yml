@@ -1,0 +1,124 @@
+version: '2.1'
+orbs:
+  terraform: circleci/terraform@3.1
+  tfsec: mycodeself/tfsec@1.1.0
+
+jobs:
+  tfsec-job:
+    parameters:
+    executor: tfsec/default
+    steps:
+      - checkout
+      - tfsec/scan:
+          directory: infrastructure/
+          exclude-checks: 'aws-ec2-no-public-ingress-sgr,aws-ec2-no-public-egress-sgr,aws-ec2-enforce-http-token-imds,aws-ec2-enable-at-rest-encryption,aws-ec2-require-vpc-flow-logs-for-all-vpcs,aws-ec2-add-description-to-security-group-rule'
+
+  init-job:
+    executor: terraform/default
+    steps:
+      - checkout
+      - run: export STATE_BUCKET=${STATE_BUCKET}
+      - terraform/init:
+          path: infrastructure/
+
+  validate-job:
+    executor: terraform/default
+    steps:
+      - checkout
+      - run: export STATE_BUCKET=${STATE_BUCKET}
+      - terraform/validate:
+          path: infrastructure/
+
+  plan-job:
+    executor: terraform/default
+    steps:
+      - checkout
+      - run: export STATE_BUCKET=${STATE_BUCKET}
+      - terraform/plan:
+          path: infrastructure/
+          out: tfplan
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+      - run: ls -lia
+      - run: ls -lia infrastructure/
+
+
+  apply-job:
+    executor: terraform/default
+    steps:
+      - checkout
+      - run: export STATE_BUCKET=${STATE_BUCKET}
+      - attach_workspace:
+          at: .
+      - run: ls -lia 
+      - run: ls -lia infrastructure/
+      - terraform/apply:
+          path: infrastructure/
+          plan: tfplan
+  
+  terratest:
+    docker:
+      - image: cimg/go:1.19.4
+    steps:
+      - checkout
+      - run: export STATE_BUCKET=${STATE_BUCKET}
+      - run: |
+          go mod init test
+          go mod tidy
+          wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor | sudo tee /usr/share/keyrings/hashicorp-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+          sudo apt update && sudo apt install -y terraform
+      - run: 
+          name: testing
+          command: go test -v
+
+
+  destroy-job:
+    executor: terraform/default
+    steps:
+      - checkout
+      - run: export STATE_BUCKET=${STATE_BUCKET}
+      - terraform/destroy:
+          path: infrastructure/
+
+workflows:
+  version: 2
+  test-deployment:
+    jobs:
+      - tfsec-job:
+          context: terraform
+      - init-job:
+          context: terraform
+          requires:
+            - tfsec-job
+      - validate-job:
+          context: terraform
+          requires:
+            - init-job
+      - plan-job:
+          context: terraform
+          requires:
+            - validate-job
+      - apply-hold:
+          type: approval
+          requires:
+            - plan-job
+      - apply-job:
+          context: terraform
+          requires:
+            - apply-hold
+      - terratest:
+          context: terraform
+          requires: 
+            - apply-job
+      - destroy-hold:
+          type: approval
+          requires:
+            - terratest
+      - destroy-job:
+          context: terraform
+          requires:
+            - destroy-hold
+ 
