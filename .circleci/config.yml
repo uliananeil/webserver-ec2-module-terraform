@@ -89,9 +89,9 @@ workflows:
     jobs:
       - tfsec-job:
           context: terraform
-            filters:
-              branches:
-                only: circleci
+          filters:
+            branches:
+              only: circleci
       - init-job:
           context: terraform
           requires:
