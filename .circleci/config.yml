@@ -97,7 +97,7 @@ jobs:
 
 workflows:
   version: 2
-  deployment:
+  deployment_<< pipeline.git.branch >>:
     jobs:
       - tfsec-job:
           filters:
