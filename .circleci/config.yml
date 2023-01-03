@@ -97,7 +97,7 @@ jobs:
 
 workflows:
   version: 2
-  test-deployment:
+  deployment:
     jobs:
       - tfsec-job:
           filters:
