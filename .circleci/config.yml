@@ -97,7 +97,7 @@ jobs:
 
 workflows:
   version: 2
-  << pipline.git.branch >>_deployment:
+  deployment_<< pipline.git.branch >>:
     jobs:
       - tfsec-job:
           filters:
