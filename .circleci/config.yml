@@ -97,12 +97,15 @@ jobs:
 
 workflows:
   version: 2
-  deployment_<< pipeline.git.branch >>:
+  deployment:
     jobs:
       - tfsec-job:
+          context: context_<< pipeline.git.branch >>
           filters:
             branches:
-              only: development
+              only: 
+                - development
+                - main
       - init-job:
           context: context_<< pipeline.git.branch >>
           filters:
