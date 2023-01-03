@@ -44,8 +44,6 @@ jobs:
           root: .
           paths:
             - .
-      - run: ls -lia
-      - run: ls -lia infrastructure/
 
 
   apply-job:
@@ -54,8 +52,6 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: ls -lia 
-      - run: ls -lia infrastructure/
       - terraform/apply:
           path: infrastructure/
           plan: tfplan
