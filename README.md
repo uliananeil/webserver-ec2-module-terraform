@@ -31,6 +31,7 @@ terraform destroy
 | AWS_ACCESS_KEY_ID          | <TEST_AWS_ACCESS_KEY_ID> |
 | AWS_SECRET_ACCESS_KEY      | <TEST_AWS_SECRET_ACCESS_KEY> |
 | BUCKET_NAME                | <TEST_BUCKET_NAME> |
+| REGION                     | <TEST_BUCKET_REGION> |
 
 4. Choose "context_main" and add the variables for production environment.
 
@@ -39,6 +40,7 @@ terraform destroy
 | AWS_ACCESS_KEY_ID          | <PRODUCTION_AWS_ACCESS_KEY_ID> |
 | AWS_SECRET_ACCESS_KEY      | <PRODUCTION_AWS_SECRET_ACCESS_KEY> |
 | BUCKET_NAME                | <PRODUCTION_BUCKET_NAME> |
+| REGION                     | <PRODUCTION_BUCKET_REGION> |
 
 5. More about [Contexts](https://circleci.com/docs/env-vars/#contexts)
      

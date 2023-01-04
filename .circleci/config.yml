@@ -18,7 +18,7 @@ jobs:
     steps:
       - checkout
       - run:
-          command: terraform init -backend=true -backend-config="bucket=$BUCKET_NAME" -backend-config="key=terraform.tfstate"
+          command: terraform init -backend=true -backend-config="bucket=$BUCKET_NAME" -backend-config="key=terraform.tfstate" -backend-config="region=$REGION"
       - persist_to_workspace:
           root: .
           paths:
